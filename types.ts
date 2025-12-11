@@ -7,8 +7,8 @@ export enum LoadingStatus {
 
 export interface GroundingChunk {
   web?: {
-    uri: string;
-    title: string;
+    uri?: string;
+    title?: string;
   };
 }
 

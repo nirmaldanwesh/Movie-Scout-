@@ -26,10 +26,21 @@ const generateWithRetry = async (params: any, retries = 3) => {
 };
 
 /**
- * Clean JSON string from Markdown code blocks
+ * Clean JSON string from Markdown code blocks and conversational text
  */
 const cleanJsonString = (text: string): string => {
-  return text.replace(/```json/g, '').replace(/```/g, '').trim();
+  // Remove markdown code blocks
+  let clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
+  
+  // Extract just the JSON array part if there's extra text around it
+  const firstOpen = clean.indexOf('[');
+  const lastClose = clean.lastIndexOf(']');
+  
+  if (firstOpen !== -1 && lastClose !== -1 && lastClose > firstOpen) {
+    return clean.substring(firstOpen, lastClose + 1);
+  }
+  
+  return clean;
 };
 
 /**
@@ -42,7 +53,7 @@ export const searchTheatricalHits = async (month: string, year: number): Promise
     CRITICAL INSTRUCTIONS:
     1. Search for: English, Malayalam, Tamil, Telugu, and Hindi movies.
     2. Criteria: High ratings, commercial success, or high discussion on Reddit.
-    3. Output: A strict JSON array of objects.
+    3. Output: Return ONLY a raw JSON array of objects. No markdown formatting, no conversational text, no "Here is the list".
     
     JSON Format:
     [
@@ -51,8 +62,8 @@ export const searchTheatricalHits = async (month: string, year: number): Promise
         "language": "Language",
         "releaseDate": "YYYY-MM-DD",
         "status": "Blockbuster/Hit/Critical Darling",
-        "rottenTomatoes": "90% or N/A",
-        "imdb": "8.0/10 or N/A",
+        "rottenTomatoes": "80% or N/A",
+        "imdb": "6.0/10 or N/A",
         "availability": "Theaters or Specific OTT Name",
         "summary": "Short summary",
         "redditVibe": "What redditors are saying",
@@ -60,8 +71,6 @@ export const searchTheatricalHits = async (month: string, year: number): Promise
         "cast": ["Actor 1", "Actor 2", "Actor 3"]
       }
     ]
-
-    Do not add any text outside the JSON.
   `;
 
   const response = await generateWithRetry({
@@ -79,7 +88,7 @@ export const searchTheatricalHits = async (month: string, year: number): Promise
     const movies = JSON.parse(text) as Movie[];
     return { movies, groundingChunks };
   } catch (e) {
-    console.error("Failed to parse JSON", e);
+    console.error("Failed to parse JSON", e, text);
     return { movies: [], groundingChunks };
   }
 };
@@ -92,14 +101,15 @@ export const searchNewOTTReleases = async (): Promise<SearchResult> => {
     Find a list of movies that were newly released on streaming platforms (Netflix, Prime, Disney+, Hotstar, SonyLIV, SunNXT, ManoramaMax) in the last 30 days.
     
     CRITICAL INSTRUCTIONS:
-    1. Filter for Quality: Only include movies with good reviews (RT > 70% or IMDb > 7.0) or massive audience hype.
-    2. Output: A strict JSON array of objects.
+    1. Filter for Quality: Only include movies with good reviews (RT > 70% or IMDb > 6.0) or massive audience hype.
+    2. Output: Return ONLY a raw JSON array of objects. No markdown formatting, no conversational text.
     
     JSON Format:
     [
       {
         "title": "Movie Title",
         "language": "Language",
+        "Subtitle":"Language",
         "releaseDate": "YYYY-MM-DD",
         "status": "Fresh on OTT",
         "rottenTomatoes": "Score",
@@ -111,8 +121,6 @@ export const searchNewOTTReleases = async (): Promise<SearchResult> => {
         "cast": ["Actor 1", "Actor 2", "Actor 3"]
       }
     ]
-
-    Do not add any text outside the JSON.
   `;
 
   const response = await generateWithRetry({
@@ -130,7 +138,7 @@ export const searchNewOTTReleases = async (): Promise<SearchResult> => {
     const movies = JSON.parse(text) as Movie[];
     return { movies, groundingChunks };
   } catch (e) {
-    console.error("Failed to parse JSON", e);
+    console.error("Failed to parse JSON", e, text);
     return { movies: [], groundingChunks };
   }
 };
@@ -147,7 +155,7 @@ export const checkWatchlistUpdates = async (watchlist: Movie[]): Promise<Movie[]
     I have a watchlist of movies: ${titles}.
     For each movie, find out WHERE it is currently available to watch (Theaters or specific OTT platform).
     
-    Output a strict JSON array of objects with the updated availability.
+    Output a strict JSON array of objects with the updated availability. Return ONLY JSON.
     [
       {
         "title": "Movie Title",
@@ -178,7 +186,7 @@ export const checkWatchlistUpdates = async (watchlist: Movie[]): Promise<Movie[]
       return movie;
     });
   } catch (e) {
-    console.error("Failed to parse updates", e);
+    console.error("Failed to parse updates", e, text);
     return watchlist;
   }
 };

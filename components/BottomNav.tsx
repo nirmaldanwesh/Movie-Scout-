@@ -16,23 +16,25 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentTab, onTabChange, w
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 pb-safe z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-sm pb-safe z-50 border-t border-slate-800">
       <div className="flex justify-around items-center h-16 max-w-lg mx-auto">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => onTabChange(item.id)}
-            className={`relative flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors ${
+            className={`relative flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-300 ${
               currentTab === item.id ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'
             }`}
           >
-            {item.icon}
+            <div className="relative">
+                {item.icon}
+                {item.badge !== undefined && item.badge > 0 && (
+                <span className="absolute -top-1 -right-2 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-blue-600 rounded-full">
+                    {item.badge}
+                </span>
+                )}
+            </div>
             <span className="text-xs font-medium">{item.label}</span>
-            {item.badge !== undefined && item.badge > 0 && (
-              <span className="absolute top-2 right-8 sm:right-12 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">
-                {item.badge}
-              </span>
-            )}
           </button>
         ))}
       </div>
