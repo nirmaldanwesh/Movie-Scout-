@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
     <title>MovieScout & Mailer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -28,6 +28,8 @@
       body {
         background-color: #0f172a; /* Slate 900 */
         color: #f8fafc; /* Slate 50 */
+        -webkit-tap-highlight-color: transparent;
+        overscroll-behavior-y: none; /* Prevents "pull to refresh" effect on mobile */
       }
       /* Custom scrollbar for webkit */
       ::-webkit-scrollbar {
@@ -42,6 +44,14 @@
       }
       ::-webkit-scrollbar-thumb:hover {
         background: #64748b;
+      }
+      
+      /* Mobile Safe Area Utilities */
+      .pt-safe {
+        padding-top: env(safe-area-inset-top);
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom);
       }
       
       /* Markdown Styles */
