@@ -1,0 +1,5 @@
+{
+  "name": "MovieScout & Mailer",
+  "description": "An intelligent assistant that finds movie hits (English, Malayalam, Tamil, etc.) with IMDb/Rotten Tomatoes scores and OTT availability, using Google Search & Reddit grounding.",
+  "requestFramePermissions": []
+}
