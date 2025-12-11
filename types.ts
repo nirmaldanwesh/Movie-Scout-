@@ -16,6 +16,7 @@ export interface Movie {
   title: string;
   language: string;
   releaseDate: string;
+  ottReleaseDate?: string; // Added for OTT release date tracking
   status: string; // e.g. "Blockbuster", "Critical Darling"
   rottenTomatoes: string; // e.g. "95%"
   imdb: string; // e.g. "8.2/10"

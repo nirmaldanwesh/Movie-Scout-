@@ -12,6 +12,13 @@ interface MovieCardProps {
 export const MovieCard: React.FC<MovieCardProps> = ({ movie, isInWatchlist, onToggleWatchlist, isWatchlistView }) => {
   const isAvailableOnOTT = movie.availability.toLowerCase() !== 'theaters' && !movie.availability.toLowerCase().includes('not available');
 
+  const formattedOTTDate = React.useMemo(() => {
+    if (!movie.ottReleaseDate) return null;
+    const date = new Date(movie.ottReleaseDate);
+    if (isNaN(date.getTime())) return null;
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  }, [movie.ottReleaseDate]);
+
   return (
     <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-lg flex flex-col p-3.5 gap-2.5 hover:border-slate-600 transition-colors">
         {/* Header Section: Title, Meta, Action Button */}
@@ -61,9 +68,16 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, isInWatchlist, onTo
                 )}
             </div>
 
-            <div className={`flex items-center gap-1.5 font-medium ${isAvailableOnOTT ? 'text-green-400' : 'text-blue-400'}`}>
-                <Tv className="w-3.5 h-3.5" />
-                <span className="truncate max-w-[120px] text-right">{movie.availability}</span>
+            <div className="flex flex-col items-end justify-center">
+                <div className={`flex items-center gap-1.5 font-medium ${isAvailableOnOTT ? 'text-green-400' : 'text-blue-400'}`}>
+                    <Tv className="w-3.5 h-3.5" />
+                    <span className="truncate max-w-[120px] text-right">{movie.availability}</span>
+                </div>
+                {formattedOTTDate && (
+                    <span className="text-[10px] text-slate-500 pr-0.5">
+                        {formattedOTTDate}
+                    </span>
+                )}
             </div>
         </div>
 

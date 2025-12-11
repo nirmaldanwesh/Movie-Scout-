@@ -111,6 +111,7 @@ export const searchNewOTTReleases = async (): Promise<SearchResult> => {
         "language": "Language",
         "Subtitle":"Language",
         "releaseDate": "YYYY-MM-DD",
+        "ottReleaseDate": "YYYY-MM-DD",
         "status": "Fresh on OTT",
         "rottenTomatoes": "Score",
         "imdb": "Score",
